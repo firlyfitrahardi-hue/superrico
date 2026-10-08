@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /* proximity: the four dish worlds snap, the flowing page below scrolls freely */
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+    /* Native scrollbar stays hidden; the navbar progress bar and active link show position. */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  body {
+    @apply bg-black text-white antialiased overflow-x-hidden font-sans;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  ::selection {
+    background: rgba(230, 57, 70, 0.35);
+  }
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+  .marquee {
+    animation: marquee 28s linear infinite;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Press feedback: instant response on pointer-down, on every tappable control.
+   Unlayered so it wins over Tailwind's transition utilities.
+--------------------------------------------------------------------------- */
+.press {
+  transition:
+    transform 120ms ease-out,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    opacity 200ms ease;
+  touch-action: manipulation; /* no double-tap delay */
+  -webkit-tap-highlight-color: transparent;
+}
+.press:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) {
+  .press-lift:hover {
+    transform: translateY(-2px);
+  }
+  .press-lift:hover:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Full-width rows (FAQ) highlight instead of scaling */
+.press-row {
+  transition: background-color 120ms ease-out;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.press-row:active {
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Navbar material: a translucent layer content scrolls under, with a soft
+   scroll-edge fade instead of a hard divider.
+--------------------------------------------------------------------------- */
+.nav-material {
+  position: absolute;
+  inset: 0 0 -1.25rem 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 66%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 66%, transparent 100%);
+  transition: opacity 300ms ease, background-color 300ms ease;
+}
+.nav-material[data-tone='light'] {
+  background-color: rgba(255, 248, 231, 0.74);
+}
+.nav-material[data-tone='dark'] {
+  background-color: rgba(26, 5, 3, 0.66);
+}
+
+/* ---------------------------------------------------------------------------
+   User preferences
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee {
+    animation: none;
+  }
+  .press:active,
+  .press-lift:hover,
+  .press-lift:hover:active {
+    transform: none;
+  }
+  .press:active {
+    opacity: 0.75; /* still acknowledge the press, without movement */
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav-material {
+    inset: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .nav-material[data-tone='light'] { background-color: #fff8e7; }
+  .nav-material[data-tone='dark'] { background-color: #1a0503; }
+  .glass {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .nav-material {
+    inset: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-bottom: 1px solid currentColor;
+  }
+  .nav-material[data-tone='light'] { background-color: #fff8e7; }
+  .nav-material[data-tone='dark'] { background-color: #1a0503; }
+  /* Softened text goes to full strength */
+  [class*='opacity-7'],
+  [class*='opacity-8'],
+  [class*='opacity-9'] {
+    opacity: 1 !important;
+  }
+}
