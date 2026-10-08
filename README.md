@@ -200,3 +200,19 @@ They are AI-generated, not photographs of Super Rico's own dishes, so they carry
 credit in the gallery. Photos of the real place (dining room, storefront, member club card,
 event poster) are kept where authenticity matters. Replace any editorial image with a real
 shoot later by overwriting the file; the layout does not change.
+
+## Deployment
+
+The site is deployed with GitHub Pages from the public repository
+[firlyfitrahardi-hue/superrico](https://github.com/firlyfitrahardi-hue/superrico):
+
+**https://firlyfitrahardi-hue.github.io/superrico/**
+
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site and publishes
+`dist/`. Nothing else is needed to redeploy. The build uses relative asset URLs (`base: './'`
+in `vite.config.ts` and the `asset()` helper in `src/data/asset.ts`) so it works under the
+`/superrico/` sub-path. Source media in `originals/` is not committed; the processed files in
+`public/` are.
+
+To use a custom domain later, add a `CNAME` file to `public/` with the domain and point the
+domain's DNS at GitHub Pages; the relative URLs need no change.
